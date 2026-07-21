@@ -1,41 +1,39 @@
-# ── Données — ignorées dans les PR ────────────────────────────
-data/raw/*
-data/processed/*
-!data/raw/.gitkeep
-!data/processed/.gitkeep
-*.csv
-*.parquet
-*.xlsx
+# ── .gitignore : ne versionner que les fichiers utiles au deploiement ──
+# Approche allowlist : tout est ignore par defaut, seuls les chemins
+# explicitement autorises ci-dessous sont versionnables.
 
-# Echantillon leger requis par app_v2.py (SHAP) en deploiement distant
-!data/processed/shap_background_sample.parquet
+# Ignorer tout a la racine
+/*
 
-# ── Outputs modèles ────────────────────────────────────────────
-*.pkl
-*.joblib
-mlruns/
+# Autoriser les fichiers/dossiers necessaires au deploiement de app_v2.py
+!/app_v2.py
+!/utils/
+!/assets/
+!/requirements.txt
+!/requirements-app.txt
+!/data/
+!/.gitignore
+!/README.md
+!/.devcontainer/
 
-# ── Python ─────────────────────────────────────────────────────
-__pycache__/
-*.py[cod]
-*.egg-info/
-dist/
-build/
-.venv/
-env/
-venv/
+# Dans data/, ignorer tout sauf l'echantillon SHAP necessaire au deploiement
+/data/*
+!/data/processed/
+/data/processed/*
+!/data/processed/shap_background_sample.parquet
 
-# ── Jupyter ────────────────────────────────────────────────────
-.ipynb_checkpoints/
-
-# ── Secrets ────────────────────────────────────────────────────
+# ── Secrets — jamais commiter, meme dans un dossier autorise ──────
 .env
 .env.*
 secrets.yaml
+.streamlit/secrets.toml
 
-# ── OS ─────────────────────────────────────────────────────────
+# ── Artefacts locaux — jamais commiter, meme dans un dossier autorise ──
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
 .DS_Store
 Thumbs.db
-
-# Streamlit secrets � NE PAS COMMITER
-.streamlit/secrets.toml
+*.pkl
+*.joblib
