@@ -7,6 +7,9 @@ data/processed/*
 *.parquet
 *.xlsx
 
+# Echantillon leger requis par app_v2.py (SHAP) en deploiement distant
+!data/processed/shap_background_sample.parquet
+
 # ── Outputs modèles ────────────────────────────────────────────
 *.pkl
 *.joblib
@@ -33,3 +36,6 @@ secrets.yaml
 # ── OS ─────────────────────────────────────────────────────────
 .DS_Store
 Thumbs.db
+
+# Streamlit secrets � NE PAS COMMITER
+.streamlit/secrets.toml

@@ -92,10 +92,16 @@ def load_rf_model():
 
 @st.cache_resource
 def load_explainer(_model, n_background=200):
-    """Initialise le SHAP TreeExplainer (calcule une seule fois)."""
+    """Initialise le SHAP TreeExplainer (calcule une seule fois).
+
+    shap_background_sample.parquet (echantillon leger, commite sur GitHub) est
+    priorise pour fonctionner sur les deploiements distants (Streamlit Cloud) ou
+    data/processed/*.parquet (donnees completes) est absent du repo (.gitignore).
+    """
     try:
         root = Path(__file__).resolve().parent
-        for p in [root / "data" / "processed" / "credit_risk_kmeans.parquet",
+        for p in [root / "data" / "processed" / "shap_background_sample.parquet",
+                  root / "data" / "processed" / "credit_risk_kmeans.parquet",
                   root / "data" / "processed" / "credit_risk_clean.parquet"]:
             if p.exists():
                 df = pd.read_parquet(p)
@@ -290,6 +296,19 @@ hr {{ border-color: {BICICI_GREEN_LIGHT} !important; opacity: 0.8; }}
 </style>""", unsafe_allow_html=True)
 
 # Chargement
+if not MLFLOW_URI:
+    st.error(
+        "MLFLOW_TRACKING_URI manquant ou vide — mlflow utilise un registre local "
+        "vide au lieu de DagsHub, d'ou l'erreur 'Registered Model not found'.\n\n"
+        "**Sur Streamlit Community Cloud** : le fichier `.env` local n'est jamais "
+        "deploye. Configurer les secrets separement dans "
+        "*App settings → Secrets* (memes cles que `.streamlit/secrets.toml` : "
+        "`MLFLOW_TRACKING_URI`, `MLFLOW_TRACKING_USERNAME`, "
+        "`MLFLOW_TRACKING_PASSWORD`, `HF_TOKEN`), puis **redemarrer l'app** "
+        "(menu ⋮ → Reboot app)."
+    )
+    st.stop()
+
 model = load_rf_model()
 if model is None:
     st.error("Modele non disponible. Verifier la connexion DagsHub (J3S1).")
